@@ -6,11 +6,11 @@ class Game(object):
         self.board = Board()
         self.players = players
         self.turn = 0
-        self.map_to_player = {'X': 0, 'O': 1}
 
     def _get_player(self, sign):
-        index = self.map_to_player[sign]
-        return self.players[index]
+        for player in self.players:
+            if player.sign == sign:
+                return player
 
     def is_over(self):
         if self.board.has_winner():

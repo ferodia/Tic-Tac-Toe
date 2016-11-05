@@ -1,12 +1,17 @@
 from random import shuffle
 from game import Game
-from player import RandomPlayer
+from player import RandomPlayer, BruteForcePlayer
+
+playersTypes = {
+    1: RandomPlayer,
+    2: BruteForcePlayer
+}
 
 
-def create_players(names):
+def create_players(names, p_type):
     # Create players
-    player1 = RandomPlayer(name=names[0], sign='X')
-    player2 = RandomPlayer(name=names[1], sign='O')
+    player1 = playersTypes[p_type](name=names[0], sign='X')
+    player2 = playersTypes[p_type](name=names[1], sign='O')
     return [player1, player2]
 
 
@@ -26,16 +31,17 @@ if __name__ == "__main__":
     input_names = raw_input("Enter names of the two players, separated by space :\n").split(' ')
 
     # Creating players
-    players = create_players(input_names)
+    player_type = int(raw_input("what kind of players you choose ? (1 for random 2 for bruteforce)\n"))
+    players = create_players(input_names, player_type)
 
     # Start games
     for i in range(1, n+1):
 
         print "Round", i
 
-        # shuffle players for fairness
-        shuffle(players)
-        print "after shuffle player", players[0].name, "is starting"
+        # switch players at the beginning of each game for fairness
+        players.reverse()
+        print players[0].name, "is starting"
 
         game = Game(players)
         while not game.is_over():
