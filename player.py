@@ -91,3 +91,12 @@ class QLearningPlayer(Player):
 
     def choose_action(self, board):
         pass
+
+
+class HumanPlayer(Player):
+    """
+    Player taking input from user
+    """
+    def choose_action(self, board):
+        i, j = [int(e) for e in raw_input("it's your turn: ").split(' ')]
+        return i, j
