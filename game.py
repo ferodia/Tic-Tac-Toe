@@ -1,18 +1,22 @@
 from board import Board
-from player import Player
-
 
 class Game(object):
 
-    def __init__(self, player1, player2):
+    def __init__(self, players):
         self.board = Board()
-        self.players = [player1, player2]
+        self.players = players
         self.turn = 0
-        self.map_to_player = {'X': player1, 'O': player2}
+        self.map_to_player = {'X': 0, 'O': 1}
+
+    def _get_player(self, sign):
+        index = self.map_to_player[sign]
+        return self.players[index]
 
     def is_over(self):
         if self.board.has_winner():
-            print "Winner is ", self.map_to_player[self.board.winner].name
+            winner = self._get_player(self.board.winner)
+            winner.update_score()
+            print "Winner is", winner.name
             return True
         elif self.board.is_full():
             print "Board is full, no winner"
@@ -25,21 +29,3 @@ class Game(object):
         player.move(self.board)
         self.board.print_board()
         self.turn = (self.turn + 1) % 2
-
-
-if __name__ == "__main__":
-
-    print "Welcome to Tic Tac Toe"
-    n = int(raw_input("How many games you wish to play ?"))
-
-    # players
-    player1 = Player(name="mannino", sign='X')
-    player2 = Player(name="mannina", sign='O')
-
-    for i in range(n):
-        print "Starting a game"
-        game = Game(player1, player2)
-        while not game.is_over():
-            game.play()
-
-    print "Goodbye"
