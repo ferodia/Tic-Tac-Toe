@@ -15,7 +15,7 @@ class Game(object):
     def is_over(self):
         if self.board.has_winner():
             winner = self._get_player(self.board.winner)
-            winner.update_score()
+            winner.update_score(self.board)
             print "Winner is", winner.name
             return True
         elif self.board.is_full():

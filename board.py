@@ -9,6 +9,14 @@ class Board(object):
         self.__empty_cells = [(i, j) for i in range(self.n) for j in range(self.n)]
 
     @property
+    def state(self):
+        state = ''
+        for row in self.grid:
+            for e in row:
+                state = state + e
+        return state
+
+    @property
     def empty_cells(self):
         return self.__empty_cells
 
