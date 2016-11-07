@@ -14,7 +14,7 @@ if __name__ == "__main__":
 
     # Creating players
     player_type = \
-        int(raw_input("what kind of players you choose ? (1 for random 2 for bruteforce 3 for QlearningPlayer)\n"))
+        int(raw_input("what kind of players you choose ? (1 for random 2 for strategy 3 for QlearningPlayer)\n"))
 
     players = create_players(input_names, player_type, reply)
 
