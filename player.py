@@ -1,7 +1,6 @@
 import copy
-import random
-
 import pickle
+import random
 
 
 class Player(object):
@@ -27,13 +26,26 @@ class Player(object):
         return self.__name
 
     def move(self, board):
+        """
+        The steps of the move are:
+        Choosing an action
+        the child class
+        and fill the cell
+        """
         choice = self.choose_action(board)
         board.mark_cell(choice[0], choice[1], self._sign)
 
     def choose_action(self, board):
+        """
+        Choosing coordinated in the board to play
+        Should be implemented by the child class
+        """
         raise NotImplementedError
 
     def update_score(self, board):
+        """
+        This method  inscrements the score
+        """
         self._score += 1
 
 
@@ -47,7 +59,7 @@ class RandomPlayer(Player):
         return random.choice(options)
 
 
-class BruteForcePlayer(Player):
+class StrategyPlayer(Player):
     """
     This player analyses all the board content
     and proceeds with the following:
@@ -55,11 +67,18 @@ class BruteForcePlayer(Player):
     - take a winning move
     - otherwise just play randomly
     """
+
     def choose_action(self, board):
+        """
+        Follwoing the algorithm in the description, an action is chosen
+        returns coordinates of the cell in the board
+        """
         options = board.empty_cells
 
         # In this game we look for winning possibilities
         for choice in options:
+            # For each option play the option,
+            # and observe the outcome
             new_board = copy.deepcopy(board)
             new_board.mark_cell(choice[0], choice[1], self._sign)
             # If a winning cell is found, occupy it
@@ -68,9 +87,11 @@ class BruteForcePlayer(Player):
 
         # In this loop we prevent loosing the game
         for choice in options:
+            # For each option play the option,
+            # and observe the outcome
             new_board = copy.deepcopy(board)
             new_board.mark_cell(choice[0], choice[1], self._get_opponent_sign())
-            # If a winning cell is found, occupy it
+            # If an opponent has a winning cell occupy it
             if new_board.has_winner():
                 return choice
 
@@ -78,6 +99,9 @@ class BruteForcePlayer(Player):
         return random.choice(options)
 
     def _get_opponent_sign(self):
+        """
+        get the sign of the opponent
+        """
         if self.sign == 'X':
             return 'O'
         else:
@@ -89,31 +113,40 @@ class QLearningPlayer(Player):
     A player using Q learning algorithm, temporal
     reinforcement learning method based on mapping
     states to actions and trying to predict the rewards
+    - Q table maps states to actions
+    - the key of table is the state, the value is
+    the list of actions
+    - Exploration is insured with a probability epsilon
+    However when the player has learned enough, the value is
+    decreased slowly to decrement random behavior
     """
 
     def __init__(self, name, sign):
         super(QLearningPlayer, self).__init__(name, sign)
-        # Q table maps states to actions
-        # the key of table is the state, the value is
-        # the list of actions
-        #self.Q_table = {}
+
         self.Q_table = pickle.load(open("Qtable_training.p", "rb"))
         self._old_state = None
         self._old_score = 0
         self.action = None
+        self.epsilon = 0.2
 
     @property
     def Qtable(self):
+        """
+        return table
+        """
         return self.Q_table
 
     def choose_action(self, board):
-
+        """
+        Choosing an optimised action from the Q table,
+        or explore and play random (for a small probability)
+        """
         options = board.empty_cells
         # to allow exploration, have a small probability of a random move
-        epsilon = 0.2
         p_random = random.random()
         # if the state is not in the table add it
-        if (self.sign, board.state) not in self.Q_table.keys() or p_random < epsilon:
+        if (self.sign, board.state) not in self.Q_table.keys() or p_random < self.epsilon:
             values = {}
             for option in options:
                 values[option] = random.random()
@@ -123,9 +156,19 @@ class QLearningPlayer(Player):
             values = self.Q_table[(self.sign, board.state)]
             action = max(values, key=values.get)
             self.action = action
+
+        # decrease exploration after each action
+        if self.epsilon > 0:
+            self.epsilon -= 0.0001
+
         return self.action
 
     def move(self, board):
+        """
+
+        :param board:
+        :return:
+        """
         self._old_state = board.state
         choice = self.choose_action(board)
         board.mark_cell(choice[0], choice[1], self._sign)
@@ -152,6 +195,7 @@ class HumanPlayer(Player):
     """
     Player taking input from user
     """
+
     def choose_action(self, board):
         i, j = [int(e) for e in
                 raw_input("it's your turn: input the coordinates separated by space").split(' ')]

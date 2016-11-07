@@ -17,7 +17,6 @@ class TestPlayer(TestCase):
 
 
 class TestBruteForcePlayer(TestCase):
-
     def test_winning_move(self):
         board = Board()
         player = BruteForcePlayer(name="Baris", sign='X')

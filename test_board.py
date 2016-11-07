@@ -4,7 +4,6 @@ from board import Board
 
 
 class TestBoard(TestCase):
-
     def test_mark_cell(self):
         board = Board()
         n = 3

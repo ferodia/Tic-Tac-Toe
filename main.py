@@ -5,7 +5,7 @@ if __name__ == "__main__":
 
     print "Welcome to Tic Tac Toe"
 
-    # Gathering inputs
+    # Gather inputs from user
     n = int(raw_input("How many rounds you wish to play ?\n"))
     input_names = raw_input("Enter names of the two players, separated by space :\n").split(' ')
 
@@ -19,14 +19,12 @@ if __name__ == "__main__":
     players = create_players(input_names, player_type, reply)
 
     # Start games
-    for i in range(1, n+1):
+    for i in range(1, n + 1):
 
         print "Round", i
-
         # switch players at the beginning of each game for fairness
         players.reverse()
         print players[0].name, "is starting"
-
         game = Game(players)
         while not game.is_over():
             game.play()
